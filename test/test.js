@@ -138,7 +138,7 @@ test('supports http redirects', async t => {
   srv.on('/second', req => {
     k++;
   });
-	t.true(isPng(await getStream.buffer(stream))); // here should check html background is only about black pixels
+	t.true(isPng(await getStream.buffer(stream))); // here should check resulting png is only about black pixels
 	t.true(k===1);
 	srv.close();
 });
