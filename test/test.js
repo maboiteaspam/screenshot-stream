@@ -8,6 +8,7 @@ import getStream from 'get-stream';
 import screenshotStream from '../';
 import cookieServer from './fixtures/test-cookies.js';
 import headersServer from './fixtures/test-headers.js';
+import redirectsServer from './fixtures/test-redirects.js';
 
 test('generate screenshot', async t => {
 	const stream = screenshotStream('http://yeoman.io', '1024x768');
@@ -128,4 +129,16 @@ test.cb('send headers', t => {
 		t.is(req.headers.foobar, 'unicorn');
 		t.end();
 	});
+});
+
+test('supports http redirects', async t => {
+	const srv = redirectsServer(9003);
+	const stream = screenshotStream('http://localhost:9003/first', '1024x768');
+  let k = 0;
+  srv.on('/second', req => {
+    k++;
+  });
+	t.true(isPng(await getStream.buffer(stream))); // here should check html background is only about black pixels
+	t.true(k===1);
+	srv.close();
 });
